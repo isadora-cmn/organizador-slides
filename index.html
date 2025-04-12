@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNIP - Organizador de Aulas | Ciência da Computação</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="unip-logo">UNIP</div>
+      <div class="course-name">Ciência da Computação</div>
+    </div>
+
+    <h1>Organizador de Slides PDF</h1>
+
+    <div class="select-group">
+      <label for="aulaSelect">Selecione a Aula:</label>
+      <select id="aulaSelect" onchange="carregarPDF()">
+        <option value="">Selecione uma Aula</option>
+        <option value="aula1">Aula 1 - Introdução</option>
+        <option value="aula2">Aula 2 - Introdução </option>
+        <option value="aula3">Aula 3 - HTML </option>
+        <option value="aula4">Aula 4 - Estruturação</option>
+        <option value="aula5">Aula 5 - Links</option>
+        <option value="aula6">Aula 6 - Listas</option>
+        <option value="aula7">Aula 7 - Listas de Links,Imagens e Tabelas</option>
+        <option value="aula8">Aula 8 - Formulários</option>
+      </select>
+    </div>
+
+    <div id="pdfViewer" class="pdf-viewer">
+      <div class="placeholder">
+        <img src="https://cdn-icons-png.flaticon.com/512/1329/1329016.png" alt="Ícone de Computador" class="pdf-icon">      
+          <p>Selecione uma aula para visualizar o PDF</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    // Objetos com os links dos PDFs das aulas
+    const pdfLinks = {
+      aula1: 'pdfs/aula1.pdf',
+      aula2: 'pdfs/aula2.pdf',
+      aula3: 'pdfs/aula3.pdf',
+      aula4: 'pdfs/aula4.pdf',
+      aula5: 'pdfs/aula5.pdf',
+      aula6: 'pdfs/aula6.pdf',
+      aula7: 'pdfs/aula7.pdf',
+      aula8: 'pdfs/aula8.pdf'
+    };
+
+    async function carregarPDF() {
+      const aula = document.getElementById('aulaSelect').value;
+      const pdfContainer = document.getElementById('pdfViewer');
+      pdfContainer.innerHTML = ''; // Limpa a área de visualização
+
+      if (!aula || !pdfLinks[aula]) {
+        pdfContainer.innerHTML = `
+          <div class="placeholder">
+            <img src="https://cdn-icons-png.flaticon.com/512/2991/2991473.png" alt="Ícone de PDF" class="pdf-icon">
+            <p>Selecione uma aula para visualizar o PDF</p>
+          </div>
+        `;
+        return;
+      }
+
+      const pdfPath = pdfLinks[aula];
+
+      // Adiciona o link para download
+      const downloadLink = document.createElement('a');
+      downloadLink.href = pdfPath;
+      downloadLink.download = pdfPath.split('/').pop();
+      downloadLink.textContent = 'Baixar PDF';
+      downloadLink.className = 'download-link';
+      pdfContainer.appendChild(downloadLink);
+
+      try {
+        // Carrega o PDF
+        const loadingTask = pdfjsLib.getDocument(pdfPath);
+        const pdf = await loadingTask.promise;
+
+        // Para simplificar, vamos mostrar apenas a primeira página
+        const page = await pdf.getPage(1);
+
+        // Configuração do canvas
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        const viewport = page.getViewport({ scale: 1.5 });
+
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        // Renderiza a página do PDF no canvas
+        await page.render({
+          canvasContext: context,
+          viewport: viewport
+        }).promise;
+
+        pdfContainer.appendChild(canvas);
+      } catch (error) {
+        console.error('Erro ao carregar PDF:', error);
+        pdfContainer.innerHTML = `
+          <div class="error-message">
+            <img src="https://cdn-icons-png.flaticon.com/512/179/179386.png" alt="Ícone de erro">
+            <p>Erro ao carregar o PDF. Verifique se o arquivo existe.</p>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+
+</html>
