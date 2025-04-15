@@ -18,24 +18,25 @@
     <h1>Organizador de Slides PDF</h1>
 
     <div class="select-group">
+      <label for="disciplinaSelect">Selecione a Disciplina:</label>
+      <select id="disciplinaSelect" onchange="carregarAulas()">
+        <option value="">Selecione uma Disciplina</option>
+        <option value="web">PROGRAMAÇÃO WEB RESPONSIVA</option>
+        <option value="mobile">DESENVOLVIMENTO PARA DISPOSITIVOS MÓVEIS</option>
+      </select>
+    </div>
+
+    <div class="select-group">
       <label for="aulaSelect">Selecione a Aula:</label>
-      <select id="aulaSelect" onchange="carregarPDF()">
-        <option value="">Selecione uma Aula</option>gi
-        <option value="aula1">Aula1 - Introdução</option>
-        <option value="aula2">Aula 2 - Introdução </option>
-        <option value="aula3">Aula 3 - HTML </option>
-        <option value="aula4">Aula 4 - Estruturação</option>
-        <option value="aula5">Aula 5 - Links</option>
-        <option value="aula6">Aula 6 - Listas</option>
-        <option value="aula7">Aula 7 - Listas de Links,Imagens e Tabelas</option>
-        <option value="aula8">Aula 8 - Formulários</option>
+      <select id="aulaSelect" onchange="carregarPDF()" disabled>
+        <option value="">Primeiro selecione uma disciplina</option>
       </select>
     </div>
 
     <div id="pdfViewer" class="pdf-viewer">
       <div class="placeholder">
-        <img src="https://cdn-icons-png.flaticon.com/512/1329/1329016.png" alt="Ícone de Computador" class="pdf-icon">      
-          <p>Selecione uma aula para visualizar o PDF</p>
+        <img src="https://cdn-icons-png.flaticon.com/512/1329/1329016.png" alt="Ícone de Computador" class="pdf-icon">
+        <p>Selecione uma aula para visualizar o PDF</p>
       </div>
     </div>
   </div>
@@ -47,32 +48,76 @@
 
     // Objetos com os links dos PDFs das aulas
     const pdfLinks = {
-      aula1: 'pdfs/aula1.pdf',
-      aula2: 'pdfs/aula2.pdf',
-      aula3: 'pdfs/aula3.pdf',
-      aula4: 'pdfs/aula4.pdf',
-      aula5: 'pdfs/aula5.pdf',
-      aula6: 'pdfs/aula6.pdf',
-      aula7: 'pdfs/aula7.pdf',
-      aula8: 'pdfs/aula8.pdf'
+      web: {
+        aula1: 'pdfs/aula1.pdf',
+        aula2: 'pdfs/aula2.pdf',
+        aula3: 'pdfs/aula3.pdf',
+        aula4: 'pdfs/aula4.pdf',
+        aula5: 'pdfs/aula5.pdf',
+        aula6: 'pdfs/aula6.pdf',
+        aula7: 'pdfs/aula7.pdf',
+        aula8: 'pdfs/aula8.pdf'
+      },
+      // Adicione mais aulas de mobile conforme necessário
+      mobile: {
+        aula1: 'pdfs/mobile/ddm-2.pdf'
+        // Adicione mais aulas de mobile conforme necessário
+      }
     };
 
+    // Nomes das aulas por disciplina
+    const aulasPorDisciplina = {
+      web: [
+        "Aula1 - Introdução",
+        "Aula 2 - Introdução",
+        "Aula 3 - HTML",
+        "Aula 4 - Estruturação",
+        "Aula 5 - Links",
+        "Aula 6 - Listas",
+        "Aula 7 - Listas de Links, Imagens e Tabelas",
+        "Aula 8 - Formulários"
+      ],
+      // Adicione os nomes das aulas de mobile conforme necessário
+      mobile: [
+        "ddm2 - Variáveis, Operadores e Estruturas Condicionais",
+        // Adicione os nomes das aulas de mobile conforme necessário
+      ]
+    };
+
+    function carregarAulas() {
+      const disciplina = document.getElementById('disciplinaSelect').value;
+      const aulaSelect = document.getElementById('aulaSelect');
+
+      aulaSelect.innerHTML = '<option value="">Selecione uma Aula</option>';
+      aulaSelect.disabled = !disciplina;
+
+      if (!disciplina) return;
+
+      // Preenche as opções de aula
+      aulasPorDisciplina[disciplina].forEach((nomeAula, index) => {
+        const option = document.createElement('option');
+        option.value = `aula${index + 1}`;
+        option.textContent = nomeAula;
+        aulaSelect.appendChild(option);
+      });
+    }
+
     async function carregarPDF() {
+      const disciplina = document.getElementById('disciplinaSelect').value;
       const aula = document.getElementById('aulaSelect').value;
       const pdfContainer = document.getElementById('pdfViewer');
       pdfContainer.innerHTML = ''; // Limpa a área de visualização
 
-      if (!aula || !pdfLinks[aula]) {
+      if (!disciplina || !aula || !pdfLinks[disciplina] || !pdfLinks[disciplina][aula]) {
         pdfContainer.innerHTML = `
           <div class="placeholder">
             <img src="https://cdn-icons-png.flaticon.com/512/1329/1329016.png" alt="Ícone de PDF" class="pdf-icon">
             <p>Selecione uma aula para visualizar o PDF</p>
-          </div>
-        `;
+          </div>`;
         return;
       }
 
-      const pdfPath = pdfLinks[aula];
+      const pdfPath = pdfLinks[disciplina][aula];
 
       // Adiciona o link para download
       const downloadLink = document.createElement('a');
@@ -116,7 +161,6 @@
       }
     }
   </script>
-  
 </body>
 
 </html>
