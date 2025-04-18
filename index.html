@@ -49,19 +49,19 @@
     // Objetos com os links dos PDFs das aulas
     const pdfLinks = {
       web: {
-        aula1: 'pdfs/aula1.pdf',
-        aula2: 'pdfs/aula2.pdf',
-        aula3: 'pdfs/aula3.pdf',
-        aula4: 'pdfs/aula4.pdf',
-        aula5: 'pdfs/aula5.pdf',
-        aula6: 'pdfs/aula6.pdf',
-        aula7: 'pdfs/aula7.pdf',
-        aula8: 'pdfs/aula8.pdf'
+        aula1: 'pdfs/web/aula1.pdf',
+        aula2: 'pdfs/web/aula2.pdf',
+        aula3: 'pdfs/web/aula3.pdf',
+        aula4: 'pdfs/web/aula4.pdf',
+        aula5: 'pdfs/web/aula5.pdf',
+        aula6: 'pdfs/web/aula6.pdf',
+        aula7: 'pdfs/web/aula7.pdf',
+        aula8: 'pdfs/web/aula8.pdf'
       },
       // Adicione mais aulas de mobile conforme necessário
       mobile: {
-        aula1: 'pdfs/mobile/ddm-2.pdf'
-        // Adicione mais aulas de mobile conforme necessário
+        aula1: 'pdfs/mobile/ddm-2.pdf',
+        aula2: 'pdfs/mobile/ddm-4.pdf'
       }
     };
 
@@ -77,10 +77,9 @@
         "Aula 7 - Listas de Links, Imagens e Tabelas",
         "Aula 8 - Formulários"
       ],
-      // Adicione os nomes das aulas de mobile conforme necessário
       mobile: [
         "ddm2 - Variáveis, Operadores e Estruturas Condicionais",
-        // Adicione os nomes das aulas de mobile conforme necessário
+        "ddm4 - Programação Estruturada, Sequência, Seleção e Repetição"
       ]
     };
 
@@ -132,7 +131,6 @@
         const loadingTask = pdfjsLib.getDocument(pdfPath);
         const pdf = await loadingTask.promise;
 
-        // Para simplificar, vamos mostrar apenas a primeira página
         const page = await pdf.getPage(1);
 
         // Configuração do canvas
